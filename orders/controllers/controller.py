@@ -4,6 +4,7 @@ from orders.models import Order
 
 
 def update_model(values: list):
+    Order.objects.all().delete()
     for value in values:
         try:
             order = Order.objects.get(number=value[1])
