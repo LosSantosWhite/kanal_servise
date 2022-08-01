@@ -53,10 +53,10 @@ class TableValues:
 
         return insert_value
 
-    def get_values(self, rub_exchange: float) -> list:
+    def get_values(self, rub_exchange: float) -> tuple:
         values = self.get_raw_values()["values"]
         insert_value = self.count_exchange(rub_exchange)
-        values = list(map(insert_value, values))
+        values = tuple(map(insert_value, values))
         return values
 
 
