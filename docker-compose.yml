@@ -1,0 +1,75 @@
+version: "3.10"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  web:
+    build: .
+    command: bash -c "python manage.py makemigrations &&
+                      python manage.py migrate &&
+                      python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+      - migrate
+      - redis
+
+  redis:
+    image: redis:alpine
+
+  celery:
+    build: .
+    command: celery -A google_sheet_data worker -l info
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - db
+      - redis
+      - web
+
+
+  celery-beat:
+    build: .
+    command: celery -A google_sheet_data beat -l info
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - db
+      - redis
+      - web
+
+  migrate:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate"
+    volumes:
+      - .:/code
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+
+
