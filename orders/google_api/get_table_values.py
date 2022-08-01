@@ -57,7 +57,6 @@ class TableValues:
         values = self.get_raw_values()["values"]
         insert_value = self.count_exchange(rub_exchange)
         values = list(map(insert_value, values))
-        print(values)
         return values
 
 
