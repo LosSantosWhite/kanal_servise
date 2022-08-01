@@ -15,4 +15,4 @@ def get_rub_exchange(currency_code: str = "USD") -> float:
     for _ in tree.iter('Valute'):
         if _[1].text == currency_code:
             value = _[-1].text.replace(',', '.')
-    return float(value)
+    return round(float(value), 2)
