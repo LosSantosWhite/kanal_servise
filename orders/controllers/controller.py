@@ -1,5 +1,3 @@
-import django.db.models
-from django.core.exceptions import ObjectDoesNotExist
 from orders.models import Order
 
 
